@@ -12,11 +12,33 @@ class Sheets with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createSheet() async {
+  Future<void> createSpreadsheet() async {
     const url = 'https://sheets.googleapis.com/v4/spreadsheets';
     var response = await http.post(url,
         body: jsonEncode({
-          'properties': {'title': 'Made with Flutter App'}
+          "properties": {
+            "title": "Made With Flutter",
+          }
+        }),
+        headers: await _user.authHeaders);
+    print(jsonDecode(response.body));
+  }
+
+  Future<void> createSheet() async {
+    const url =
+        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk:batchUpdate';
+    var response = await http.post(url,
+        body: jsonEncode({
+          "requests": [
+            {
+              "addSheet": {
+                "properties": {
+                  "title": "new",
+                  "gridProperties": {"rowCount": 20, "columnCount": 2},
+                },
+              }
+            }
+          ]
         }),
         headers: await _user.authHeaders);
     print(jsonDecode(response.body));

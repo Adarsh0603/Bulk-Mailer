@@ -1,5 +1,7 @@
 import 'package:bulk_mailer/data/auth.dart';
 import 'package:bulk_mailer/data/sheets_api.dart';
+import 'package:bulk_mailer/screens/create_sheet.dart';
+import 'package:bulk_mailer/screens/home_screen.dart';
 import 'package:bulk_mailer/screens/splash_screen.dart';
 import 'package:bulk_mailer/screens/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,6 +36,10 @@ class BulkMailer extends StatelessWidget {
                   ? SplashScreen()
                   : Wrapper(),
         ),
+        routes: {
+          HomeScreen.routeName: (ctx) => HomeScreen(),
+          CreateSheet.routeName: (ctx) => CreateSheet(),
+        },
       ),
     );
   }
