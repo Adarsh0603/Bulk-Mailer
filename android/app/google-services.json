@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "247289635259",
+    "firebase_url": "https://bulkmailer-8e633.firebaseio.com",
+    "project_id": "bulkmailer-8e633",
+    "storage_bucket": "bulkmailer-8e633.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247289635259:android:c37ce342da4bdf5b96a49e",
+        "android_client_info": {
+          "package_name": "com.adarshverma.bulk_mailer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247289635259-bvt1tjhvofeudjdohkq4qov4n8q19p3e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adarshverma.bulk_mailer",
+            "certificate_hash": "8ee0efe369b05906c3f7d3727125a853c912096d"
+          }
+        },
+        {
+          "client_id": "247289635259-tj6gcnibmtiu6ckcs3favb11n9d5ojq4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhv4YMRI6I_CCwaYL0P841VHBhUeaMfMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247289635259-tj6gcnibmtiu6ckcs3favb11n9d5ojq4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
