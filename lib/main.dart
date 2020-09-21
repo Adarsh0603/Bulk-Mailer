@@ -1,6 +1,5 @@
 import 'package:bulk_mailer/data/auth.dart';
 import 'package:bulk_mailer/data/sheets_api.dart';
-import 'package:bulk_mailer/screens/home_screen.dart';
 import 'package:bulk_mailer/screens/splash_screen.dart';
 import 'package:bulk_mailer/screens/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,7 +22,7 @@ class BulkMailer extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider<Auth, Sheets>(
           create: (BuildContext context) => Sheets(),
-          update: (_, auth, sheets) => sheets..update(),
+          update: (_, auth, sheets) => sheets..update(auth.googleUser),
         ),
       ],
       child: MaterialApp(
