@@ -3,15 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Auth with ChangeNotifier {
-  bool loading = false;
   GoogleSignInAccount _googleUser;
   GoogleSignInAccount get googleUser => _googleUser;
   final GoogleSignIn _googleSignIn =
       GoogleSignIn(scopes: ['https://www.googleapis.com/auth/drive.file']);
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<UserCredential> signInWithGoogle() async {
-    loading = true;
     _googleUser = await _googleSignIn.signIn();
     notifyListeners();
     final GoogleSignInAuthentication googleAuth =
@@ -23,6 +22,11 @@ class Auth with ChangeNotifier {
     );
 
     return await _auth.signInWithCredential(credential);
+  }
+
+  Future<void> signOut() async {
+    _googleSignIn.disconnect();
+    await FirebaseAuth.instance.signOut();
   }
 
   void autoLogin() {

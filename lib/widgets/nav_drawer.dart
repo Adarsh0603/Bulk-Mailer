@@ -1,5 +1,8 @@
+import 'package:bulk_mailer/data/auth.dart';
+import 'package:bulk_mailer/data/sheets.dart';
 import 'package:bulk_mailer/screens/create_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NavDrawer extends StatelessWidget {
   @override
@@ -20,6 +23,35 @@ class NavDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               Navigator.pushNamed(context, CreateSheet.routeName);
+            },
+          ),
+          ListTile(
+            title: Text('Open Sheet'),
+            onTap: () async {
+              Navigator.pop(context);
+              await Provider.of<Sheets>(context, listen: false).openSheet();
+            },
+          ),
+          ListTile(
+            title: Text('Add Data'),
+            onTap: () async {
+              Navigator.pop(context);
+              await Provider.of<Sheets>(context, listen: false).addData();
+            },
+          ),
+          ListTile(
+            title: Text('Get Data'),
+            onTap: () async {
+              Navigator.pop(context);
+              await Provider.of<Sheets>(context, listen: false).getData();
+            },
+          ),
+          ListTile(
+            title: Text('Sign Out'),
+            onTap: () async {
+              Navigator.pop(context);
+
+              await Provider.of<Auth>(context, listen: false).signOut();
             },
           ),
         ],

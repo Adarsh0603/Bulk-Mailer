@@ -1,5 +1,5 @@
 import 'package:bulk_mailer/data/auth.dart';
-import 'package:bulk_mailer/data/sheets_api.dart';
+import 'package:bulk_mailer/data/sheets.dart';
 import 'package:bulk_mailer/screens/create_sheet.dart';
 import 'package:bulk_mailer/screens/home_screen.dart';
 import 'package:bulk_mailer/screens/splash_screen.dart';
@@ -28,6 +28,7 @@ class BulkMailer extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'BulkMailer',
         home: FutureBuilder(
           future: _initialization,
