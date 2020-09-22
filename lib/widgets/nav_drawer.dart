@@ -47,6 +47,13 @@ class NavDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            title: Text('Get Sheets'),
+            onTap: () async {
+              Navigator.pop(context);
+              await Provider.of<Sheets>(context, listen: false).getSheets();
+            },
+          ),
+          ListTile(
             title: Text('Sign Out'),
             onTap: () async {
               Navigator.pop(context);

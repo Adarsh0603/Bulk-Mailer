@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bulk_mailer/models/usersheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Sheets with ChangeNotifier {
   GoogleSignInAccount _user;
+  List<UserSheet> _userSheets = [];
+
+  List<UserSheet> get userSheets => _userSheets;
 
   void update(GoogleSignInAccount user) async {
     _user = user;
@@ -34,8 +38,8 @@ class Sheets with ChangeNotifier {
             {
               "addSheet": {
                 "properties": {
-                  "title": "one more",
-                  "gridProperties": {"rowCount": 20, "columnCount": 2},
+                  "title": "mailSheet1",
+                  "gridProperties": {"rowCount": 500, "columnCount": 2},
                 },
               }
             }
@@ -47,7 +51,7 @@ class Sheets with ChangeNotifier {
 
   Future<void> openSheet() async {
     var url =
-        'https://docs.google.com/spreadsheets/d/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/edit#gid=1665636340';
+        'https://docs.google.com/spreadsheets/d/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/edit#gid=193003849';
 
     if (await canLaunch(url)) {
       await launch(url);
@@ -58,25 +62,57 @@ class Sheets with ChangeNotifier {
 
   Future<void> addData() async {
     var url =
-        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/values/Sheet1!A1:B1?valueInputOption=RAW';
+        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/values/mailSheet1!A1:B1?valueInputOption=RAW';
 
     var response = await http.put(url,
         body: jsonEncode({
-          "range": "Sheet1!A1:B1",
+          "range": "mailSheet1!A1:B1",
           "majorDimension": "ROWS",
           "values": [
             ["Name", "Email"],
           ],
         }),
         headers: await _user.authHeaders);
+
     print(response.body);
+    url =
+        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk:batchUpdate';
+    response = await http.post(url,
+        body: jsonEncode({
+          "requests": [
+            {
+              "updateSheetProperties": {
+                "properties": {
+                  "sheetId": 193003849,
+                  "gridProperties": {"frozenRowCount": 1}
+                },
+                "fields": "gridProperties.frozenRowCount"
+              }
+            }
+          ]
+        }),
+        headers: await _user.authHeaders);
   }
 
   Future<void> getData() async {
     var url =
-        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/values/Sheet1!A1:D5';
-
+        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/values/mailSheet1!B:B';
     var response = await http.get(url, headers: await _user.authHeaders);
     print(jsonDecode(response.body));
+  }
+
+  Future<void> getSheets() async {
+    const url =
+        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk';
+    var response = await http.get(url, headers: await _user.authHeaders);
+    var sheetsResponse = await jsonDecode(response.body)['sheets'] as List;
+    print(sheetsResponse);
+    List<UserSheet> sheetList = [];
+    sheetsResponse.forEach((sheet) {
+      sheetList.add(UserSheet(
+          sheet['properties']['sheetId'], sheet['properties']['title']));
+    });
+    _userSheets = sheetList;
+    notifyListeners();
   }
 }
