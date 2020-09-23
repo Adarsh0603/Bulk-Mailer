@@ -19,6 +19,14 @@ class NavDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            title: Text('Create New SpreadSheet'),
+            onTap: () async {
+              Navigator.pop(context);
+              await Provider.of<Sheets>(context, listen: false)
+                  .createSpreadsheet();
+            },
+          ),
+          ListTile(
             title: Text('Create New Email Set'),
             onTap: () {
               Navigator.pop(context);

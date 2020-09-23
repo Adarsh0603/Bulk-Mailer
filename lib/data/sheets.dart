@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:bulk_mailer/models/usersheet.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +10,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Sheets with ChangeNotifier {
   GoogleSignInAccount _user;
+  FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+
   List<UserSheet> _userSheets = [];
 
   List<UserSheet> get userSheets => _userSheets;
@@ -17,16 +21,37 @@ class Sheets with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> checkNewUserInFirebase() async {
+
+    var response = await _fireStore.collection('users').doc(_user.id).get();
+    var userData = response.data();
+    if (userData == null) {
+      return false;
+    }
+    if (userData.containsKey('isInit')) {
+      return userData['isInit'] == true ? true : false;
+    }
+    return false;
+  }
+
   Future<void> createSpreadsheet() async {
     const url = 'https://sheets.googleapis.com/v4/spreadsheets';
+    var userExists = await checkNewUserInFirebase();
+    if (userExists) return;
     var response = await http.post(url,
         body: jsonEncode({
           "properties": {
-            "title": "Made With Flutter",
-          }
+            "title": "Bulk Mailer",
+          },
+          "sheets": [
+            {
+              "properties": {"sheetId": 0, "title": 'Default'}
+            }
+          ],
         }),
         headers: await _user.authHeaders);
     print(jsonDecode(response.body));
+    _fireStore.collection('users').doc(_user.id).set({'isInit': true});
   }
 
   Future<void> createSheet() async {

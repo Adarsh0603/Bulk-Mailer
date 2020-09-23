@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     final sheets = Provider.of<Sheets>(context, listen: false);
     _initSheets = Future.delayed(Duration.zero).then((_) async {
-      await sheets.getSheets();
+//      await sheets.getSheets();
     });
   }
 
