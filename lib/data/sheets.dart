@@ -17,8 +17,20 @@ class Sheets with ChangeNotifier {
 
   void update(GoogleSignInAccount user) async {
     _user = user;
-    if (_user != null) await createSpreadsheet();
+
     notifyListeners();
+    await userUpdateOperations();
+  }
+
+  Future<void> userUpdateOperations() async {
+    if (_user != null) {
+      await createSpreadsheet();
+    }
+
+    if (_user == null) {
+      _userSheets = [];
+      notifyListeners();
+    }
   }
 
   Future<bool> checkNewUserInFirebase() async {
@@ -77,8 +89,9 @@ class Sheets with ChangeNotifier {
         }),
         headers: await _user.authHeaders);
     var newSheetMetaData = jsonDecode(response.body);
-    var sheetId =
-        newSheetMetaData['replies'][0]['addSheet']['properties']['sheetId'];
+    print(newSheetMetaData);
+    var sheetId = await newSheetMetaData['replies'][0]['addSheet']['properties']
+        ['sheetId'];
     await openSheet(sheetId);
   }
 
@@ -120,6 +133,22 @@ class Sheets with ChangeNotifier {
                   "gridProperties": {"frozenRowCount": 1}
                 },
                 "fields": "gridProperties.frozenRowCount"
+              }
+            },
+            {
+              "addProtectedRange": {
+                "protectedRange": {
+                  "range": {
+                    "sheetId": 0,
+                    "startRowIndex": 0,
+                    "endRowIndex": 1,
+                    "startColumnIndex": 1,
+                    "endColumnIndex": 2,
+                  },
+                  "description":
+                      "Editing this column's properties can effect the functioning of BulkMailer",
+                  "warningOnly": true,
+                }
               }
             }
           ]
