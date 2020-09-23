@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:bulk_mailer/models/usersheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
@@ -15,6 +15,8 @@ class Sheets with ChangeNotifier {
   String _spreadsheetId = '';
   List<UserSheet> get userSheets => _userSheets;
 
+  List<String> _emailList = [];
+  List<String> get emailList => _emailList;
   void update(GoogleSignInAccount user) async {
     _user = user;
 
@@ -146,7 +148,7 @@ class Sheets with ChangeNotifier {
                     "endColumnIndex": 2,
                   },
                   "description":
-                      "Editing this column's properties can effect the functioning of BulkMailer",
+                      "The Email Addresses needs to be in the B Column.",
                   "warningOnly": true,
                 }
               }
@@ -156,11 +158,32 @@ class Sheets with ChangeNotifier {
         headers: await _user.authHeaders);
   }
 
-  Future<void> getData() async {
+  Future<void> getSheetEmails(String sheetName) async {
     var url =
-        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/Default!B:B';
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/$sheetName!B2:B';
     var response = await http.get(url, headers: await _user.authHeaders);
-    print(jsonDecode(response.body));
+    var responseData = jsonDecode(response.body)['values'] as List;
+    List<String> fetchedEmailList = [];
+    responseData.forEach((e) {
+      if (e.length != 0) {
+        if (e[0].toString().contains('@'))
+          fetchedEmailList.add(e[0].toString());
+      }
+    });
+    _emailList = fetchedEmailList;
+    print(_emailList);
+    notifyListeners();
+  }
+
+  Future<void> sendEmail() async {
+    final Email email = Email(
+      body: '',
+      subject: 'Email subject',
+      recipients: _emailList,
+      isHTML: false,
+    );
+
+    await FlutterEmailSender.send(email);
   }
 
   Future<void> getSheets() async {

@@ -1,4 +1,5 @@
 import 'package:bulk_mailer/data/sheets.dart';
+import 'package:bulk_mailer/widgets/loading_dialog.dart';
 import 'package:bulk_mailer/widgets/nav_drawer.dart';
 import 'package:bulk_mailer/widgets/sheet_item.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: NavDrawer(),
       appBar: AppBar(
         title: Text('BulkMailer'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.open_in_browser),
+            onPressed: () {
+              showDialog(context: context, builder: (ctx) => LoadingDialog());
+            },
+          )
+        ],
       ),
       body: FutureBuilder(
         future: _initSheets,
