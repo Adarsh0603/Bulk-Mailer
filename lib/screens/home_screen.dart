@@ -1,5 +1,6 @@
 import 'package:bulk_mailer/data/sheets.dart';
 import 'package:bulk_mailer/widgets/nav_drawer.dart';
+import 'package:bulk_mailer/widgets/sheet_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,9 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 : Consumer<Sheets>(
                     builder: (BuildContext context, sheets, _) {
                       return ListView.builder(
-                          itemCount: sheets.userSheets.length,
-                          itemBuilder: (ctx, i) => Text(
-                              '${sheets.userSheets[i].sheetName} ${sheets.userSheets[i].sheetId}'));
+                        itemCount: sheets.userSheets.length,
+                        itemBuilder: (ctx, i) =>
+                            SheetItem(sheets.userSheets[i]),
+                      );
                     },
                   ),
       ),

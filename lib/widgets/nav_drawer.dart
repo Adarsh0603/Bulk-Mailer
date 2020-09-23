@@ -18,14 +18,14 @@ class NavDrawer extends StatelessWidget {
               color: Colors.grey[200],
             ),
           ),
-          ListTile(
-            title: Text('Create New SpreadSheet'),
-            onTap: () async {
-              Navigator.pop(context);
-              await Provider.of<Sheets>(context, listen: false)
-                  .createSpreadsheet();
-            },
-          ),
+//          ListTile(
+//            title: Text('Create New SpreadSheet'),
+//            onTap: () async {
+//              Navigator.pop(context);
+//              await Provider.of<Sheets>(context, listen: false)
+//                  .createSpreadsheet();
+//            },
+//          ),
           ListTile(
             title: Text('Create New Email Set'),
             onTap: () {
@@ -33,13 +33,13 @@ class NavDrawer extends StatelessWidget {
               Navigator.pushNamed(context, CreateSheet.routeName);
             },
           ),
-          ListTile(
-            title: Text('Open Sheet'),
-            onTap: () async {
-              Navigator.pop(context);
-              await Provider.of<Sheets>(context, listen: false).openSheet();
-            },
-          ),
+//          ListTile(
+//            title: Text('Open Sheet'),
+//            onTap: () async {
+//              Navigator.pop(context);
+//              await Provider.of<Sheets>(context, listen: false).openSheet();
+//            },
+//          ),
           ListTile(
             title: Text('Add Data'),
             onTap: () async {

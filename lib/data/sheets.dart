@@ -10,20 +10,19 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Sheets with ChangeNotifier {
   GoogleSignInAccount _user;
-  FirebaseFirestore _fireStore = FirebaseFirestore.instance;
-
+  CollectionReference _users = FirebaseFirestore.instance.collection('users');
   List<UserSheet> _userSheets = [];
-
+  String _spreadsheetId = '';
   List<UserSheet> get userSheets => _userSheets;
 
   void update(GoogleSignInAccount user) async {
     _user = user;
+    if (_user != null) await createSpreadsheet();
     notifyListeners();
   }
 
   Future<bool> checkNewUserInFirebase() async {
-
-    var response = await _fireStore.collection('users').doc(_user.id).get();
+    var response = await _users.doc(_user.id).get();
     var userData = response.data();
     if (userData == null) {
       return false;
@@ -50,34 +49,42 @@ class Sheets with ChangeNotifier {
           ],
         }),
         headers: await _user.authHeaders);
-    print(jsonDecode(response.body));
-    _fireStore.collection('users').doc(_user.id).set({'isInit': true});
+    var sheetResponse = jsonDecode(response.body);
+    print('New Spreadsheet created with id: ${sheetResponse['spreadsheetId']}');
+    _users
+        .doc(_user.id)
+        .set({'isInit': true, 'spreadsheetId': sheetResponse['spreadsheetId']});
   }
 
-  Future<void> createSheet() async {
-    const url =
-        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk:batchUpdate';
+  Future<void> createSheet(String title) async {
+    String url =
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId:batchUpdate';
     var response = await http.post(url,
         body: jsonEncode({
           "requests": [
             {
               "addSheet": {
                 "properties": {
-                  "title": "mailSheet1",
-                  "gridProperties": {"rowCount": 500, "columnCount": 2},
+                  "title": title,
+                  "gridProperties": {
+                    "rowCount": 500
+//                    , "columnCount": 2
+                  },
                 },
               }
             }
           ]
         }),
         headers: await _user.authHeaders);
-    print(jsonDecode(response.body));
+    var newSheetMetaData = jsonDecode(response.body);
+    var sheetId =
+        newSheetMetaData['replies'][0]['addSheet']['properties']['sheetId'];
+    await openSheet(sheetId);
   }
 
-  Future<void> openSheet() async {
+  Future<void> openSheet(int sheetId) async {
     var url =
-        'https://docs.google.com/spreadsheets/d/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/edit#gid=193003849';
-
+        'https://docs.google.com/spreadsheets/d/$_spreadsheetId/edit#gid=$sheetId';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -86,12 +93,13 @@ class Sheets with ChangeNotifier {
   }
 
   Future<void> addData() async {
+    await getSpreadsheetId();
     var url =
-        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/values/mailSheet1!A1:B1?valueInputOption=RAW';
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/Default!A1:B1?valueInputOption=RAW';
 
     var response = await http.put(url,
         body: jsonEncode({
-          "range": "mailSheet1!A1:B1",
+          "range": "Default!A1:B1",
           "majorDimension": "ROWS",
           "values": [
             ["Name", "Email"],
@@ -101,14 +109,14 @@ class Sheets with ChangeNotifier {
 
     print(response.body);
     url =
-        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk:batchUpdate';
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId:batchUpdate';
     response = await http.post(url,
         body: jsonEncode({
           "requests": [
             {
               "updateSheetProperties": {
                 "properties": {
-                  "sheetId": 193003849,
+                  "sheetId": 0,
                   "gridProperties": {"frozenRowCount": 1}
                 },
                 "fields": "gridProperties.frozenRowCount"
@@ -121,14 +129,15 @@ class Sheets with ChangeNotifier {
 
   Future<void> getData() async {
     var url =
-        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk/values/mailSheet1!B:B';
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/Default!B:B';
     var response = await http.get(url, headers: await _user.authHeaders);
     print(jsonDecode(response.body));
   }
 
   Future<void> getSheets() async {
-    const url =
-        'https://sheets.googleapis.com/v4/spreadsheets/1jEGeCbNjCq5BeHAGLucmLErbhlbnA30A0TD8qNfJnrk';
+    await getSpreadsheetId();
+    String url =
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId';
     var response = await http.get(url, headers: await _user.authHeaders);
     var sheetsResponse = await jsonDecode(response.body)['sheets'] as List;
     print(sheetsResponse);
@@ -139,5 +148,11 @@ class Sheets with ChangeNotifier {
     });
     _userSheets = sheetList;
     notifyListeners();
+  }
+
+  Future<void> getSpreadsheetId() async {
+    final userDataResponse = await _users.doc(_user.id).get();
+    final userData = userDataResponse.data();
+    _spreadsheetId = userData['spreadsheetId'];
   }
 }
