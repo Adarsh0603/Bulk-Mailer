@@ -16,6 +16,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isInit = false;
 
+  Future<void> refresh() async {
+    Provider.of<Sheets>(context, listen: false).forceRefresh();
+  }
+
   @override
   Widget build(BuildContext context) {
     final sheets = Provider.of<Sheets>(context, listen: false);
@@ -34,19 +38,25 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-        body: Consumer<Sheets>(
-          builder: (ctx, sheets, _) => sheets.gridRefresh
-              ? FutureBuilder(
-                  future: sheets.getSheets(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done)
-                      return snapshot.data == true
-                          ? SheetGrid()
-                          : ForceSpreadsheet();
-                    return Center(child: CircularProgressIndicator());
-                  })
-              : SheetGrid(),
+        body: RefreshIndicator(
+          onRefresh: refresh,
+          child: Consumer<Sheets>(
+            builder: (ctx, sheets, _) => sheets.gridRefresh
+                ? FutureBuilder(
+                    future: sheets.getSheets(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.data == true) {
+                          return SheetGrid();
+                        } else {
+                          return ForceSpreadsheet();
+                        }
+                      }
+                      return Center(child: CircularProgressIndicator());
+                    })
+                : SheetGrid(),
+          ),
         ));
   }
 }

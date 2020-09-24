@@ -13,6 +13,7 @@ class Sheets with ChangeNotifier {
   CollectionReference _users = FirebaseFirestore.instance.collection('users');
   List<UserSheet> _userSheets = [];
   String _spreadsheetId = '';
+
   List<UserSheet> get userSheets => _userSheets;
   bool _gridRefresh = true;
   bool get gridRefresh => _gridRefresh;
@@ -31,6 +32,7 @@ class Sheets with ChangeNotifier {
     }
     if (_user == null) {
       _userSheets = [];
+      _spreadsheetId = '';
       notifyListeners();
     }
   }
@@ -204,6 +206,7 @@ class Sheets with ChangeNotifier {
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId';
     var response = await http.get(url, headers: await _user.authHeaders);
     var responseData = await jsonDecode(response.body) as Map;
+    print(responseData);
     if (responseData.containsKey('error')) {
       return false;
     }
@@ -225,4 +228,17 @@ class Sheets with ChangeNotifier {
     final userData = userDataResponse.data();
     _spreadsheetId = userData['spreadsheetId'];
   }
+
+  void forceRefresh() {
+    _gridRefresh = true;
+    notifyListeners();
+  }
+
+//  //Drawer Functionality
+//  bool _showNavOptions = true;
+//  bool get showNavOptions => _showNavOptions;
+//  void setNavOptionsVisibility(bool value) {
+//    _showNavOptions = value;
+//    notifyListeners();
+//  }
 }

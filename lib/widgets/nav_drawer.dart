@@ -1,4 +1,5 @@
 import 'package:bulk_mailer/data/auth.dart';
+import 'package:bulk_mailer/data/sheets.dart';
 import 'package:bulk_mailer/screens/create_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,14 @@ class NavDrawer extends StatelessWidget {
             title: Text('Create Mail Sheet'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, CreateSheet.routeName);
+              if (Provider.of<Sheets>(context, listen: false)
+                      .userSheets
+                      .length !=
+                  0) {
+                Navigator.pushNamed(context, CreateSheet.routeName);
+              } else
+                Scaffold.of(context).showSnackBar(
+                    SnackBar(content: Text('No Spreadsheet Found')));
             },
           ),
           ListTile(

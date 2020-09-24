@@ -24,12 +24,12 @@ class _CreateSheetState extends State<CreateSheet> {
         builder: (ctx) => LoadingDialog('Creating Sheet...'));
 
     bool result = await sheets.createSheet(sheetName);
-    Navigator.of(context, rootNavigator: true).pop();
+
     if (result) {
-      await sheets.getSheets();
+      sheets.forceRefresh();
       Navigator.of(context).pop();
     }
-
+    Navigator.of(context, rootNavigator: true).pop();
     Scaffold.of(ctx).showSnackBar(SnackBar(
       content: Text('Sheet with this name already exists',
           style: kSnackBarTextStyle),
