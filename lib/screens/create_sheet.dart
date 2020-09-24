@@ -25,11 +25,13 @@ class _CreateSheetState extends State<CreateSheet> {
 
     bool result = await sheets.createSheet(sheetName);
     Navigator.of(context, rootNavigator: true).pop();
+    if (result) {
+      await sheets.getSheets();
+      Navigator.of(context).pop();
+    }
+
     Scaffold.of(ctx).showSnackBar(SnackBar(
-      content: Text(
-          result
-              ? '$sheetName created successfully'
-              : 'Sheet with this name already exists',
+      content: Text('Sheet with this name already exists',
           style: kSnackBarTextStyle),
     ));
   }
@@ -38,27 +40,30 @@ class _CreateSheetState extends State<CreateSheet> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create new Email Set'),
+        title: Text('Create Mail Sheet'),
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(Icons.done),
+              onPressed: () async {
+                await createNewSheet(context);
+              },
+            ),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
+              autofocus: true,
               decoration: kSheetNameInputDecoration,
               onChanged: (value) {
                 setState(() {
                   sheetName = value;
                 });
               },
-            ),
-            Builder(
-              builder: (BuildContext context) => RaisedButton(
-                child: Text('Create New Sheet'),
-                onPressed: () async {
-                  await createNewSheet(context);
-                },
-              ),
             ),
           ],
         ),

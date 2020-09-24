@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
-        title: Text('BulkMailer'),
+        title: Text('Select Mail Sheet'),
         actions: [
           IconButton(
             icon: Icon(Icons.open_in_browser),
@@ -47,10 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? CircularProgressIndicator()
                 : Consumer<Sheets>(
                     builder: (BuildContext context, sheets, _) {
-                      return ListView.builder(
-                        itemCount: sheets.userSheets.length,
-                        itemBuilder: (ctx, i) =>
-                            SheetItem(sheets.userSheets[i]),
+                      return Container(
+                        margin: EdgeInsets.all(8),
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  childAspectRatio: 1,
+                                  crossAxisSpacing: 10,
+                                  crossAxisCount: 2),
+                          itemCount: sheets.userSheets.length,
+                          itemBuilder: (ctx, i) =>
+                              SheetItem(sheets.userSheets[i]),
+                        ),
                       );
                     },
                   ),

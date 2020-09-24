@@ -1,3 +1,4 @@
+import 'package:bulk_mailer/constants.dart';
 import 'package:bulk_mailer/data/auth.dart';
 import 'package:bulk_mailer/data/sheets.dart';
 import 'package:bulk_mailer/screens/create_sheet.dart';
@@ -30,6 +31,8 @@ class BulkMailer extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'BulkMailer',
+        theme:
+            ThemeData(primaryColor: kPrimaryColor, accentColor: kPrimaryColor),
         home: FutureBuilder(
           future: _initialization,
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) =>

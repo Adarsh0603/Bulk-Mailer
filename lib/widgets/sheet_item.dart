@@ -1,3 +1,4 @@
+import 'package:bulk_mailer/constants.dart';
 import 'package:bulk_mailer/data/sheets.dart';
 import 'package:bulk_mailer/models/usersheet.dart';
 import 'package:bulk_mailer/widgets/loading_dialog.dart';
@@ -9,45 +10,69 @@ class SheetItem extends StatelessWidget {
 
   SheetItem(this.sheet);
 
+  void onSelect(BuildContext context) async {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (ctx) => LoadingDialog('Getting Email addresses...'));
+    bool result = await Provider.of<Sheets>(context, listen: false)
+        .getSheetEmails(sheet.sheetName);
+    Navigator.of(context, rootNavigator: true).pop();
+    if (result == true)
+      await Provider.of<Sheets>(context, listen: false).sendEmail();
+    else
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('No Email Addresses'),
+          content: Text(
+              '${sheet.sheetName} contains no email addresses.\nAdd email addresses and try again.'),
+          actions: [
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            )
+          ],
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () async {
-        showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (ctx) => LoadingDialog('Getting Email addresses...'));
-        bool result = await Provider.of<Sheets>(context, listen: false)
-            .getSheetEmails(sheet.sheetName);
-        Navigator.of(context, rootNavigator: true).pop();
-        if (result == true)
-          await Provider.of<Sheets>(context, listen: false).sendEmail();
-        else
-          showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text('No Email Addresses'),
-              content: Text(
-                  '${sheet.sheetName} contains no email addresses.\nAdd email addresses and try again.'),
-              actions: [
-                FlatButton(
-                  child: Text('OK'),
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
+    return Container(
+      child: Column(
+        children: [
+          Expanded(
+              child: GestureDetector(
+            onTap: () => onSelect(context),
+            child: Icon(
+              Icons.description,
+              color: kPrimaryColor,
+              size: 60,
+            ),
+          )),
+          Container(
+            color: Colors.grey[200],
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: [
+                Expanded(child: Text(sheet.sheetName)),
+                IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    color: kPrimaryColor,
+                  ),
+                  onPressed: () async {
+                    await Provider.of<Sheets>(context, listen: false)
+                        .openSheet(sheet.sheetId);
                   },
-                )
+                ),
               ],
             ),
-          );
-      },
-      leading: Icon(Icons.description),
-      title: Text(sheet.sheetName),
-      trailing: IconButton(
-        icon: Icon(Icons.edit),
-        onPressed: () async {
-          await Provider.of<Sheets>(context, listen: false)
-              .openSheet(sheet.sheetId);
-        },
+          ),
+        ],
       ),
     );
   }

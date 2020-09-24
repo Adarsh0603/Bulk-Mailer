@@ -19,7 +19,7 @@ class NavDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: Text('Create New Email Set'),
+            title: Text('Create Mail Sheet'),
             onTap: () {
               Navigator.pop(context);
               Navigator.pushNamed(context, CreateSheet.routeName);
