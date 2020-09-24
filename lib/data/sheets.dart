@@ -14,6 +14,8 @@ class Sheets with ChangeNotifier {
   List<UserSheet> _userSheets = [];
   String _spreadsheetId = '';
   List<UserSheet> get userSheets => _userSheets;
+  bool _gridRefresh = true;
+  bool get gridRefresh => _gridRefresh;
 
   List<String> _emailList = [];
   List<String> get emailList => _emailList;
@@ -67,6 +69,8 @@ class Sheets with ChangeNotifier {
         .doc(_user.id)
         .set({'isInit': true, 'spreadsheetId': sheetResponse['spreadsheetId']});
     await addInitialData(UserSheet(0, 'Default'));
+    _gridRefresh = true;
+    notifyListeners();
   }
 
   Future<bool> createSheet(String title) async {
@@ -95,6 +99,8 @@ class Sheets with ChangeNotifier {
     var sheetId = await newSheetMetaData['replies'][0]['addSheet']['properties']
         ['sheetId'];
     await addInitialData(UserSheet(sheetId, title));
+    _gridRefresh = true;
+    notifyListeners();
     return true;
   }
 
@@ -209,6 +215,7 @@ class Sheets with ChangeNotifier {
           sheet['properties']['sheetId'], sheet['properties']['title']));
     });
     _userSheets = sheetList;
+    _gridRefresh = false;
     notifyListeners();
     return true;
   }
