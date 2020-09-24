@@ -11,15 +11,18 @@ import 'package:url_launcher/url_launcher.dart';
 class Sheets with ChangeNotifier {
   GoogleSignInAccount _user;
   CollectionReference _users = FirebaseFirestore.instance.collection('users');
-  List<UserSheet> _userSheets = [];
   String _spreadsheetId = '';
 
+  List<UserSheet> _userSheets = [];
   List<UserSheet> get userSheets => _userSheets;
+
   bool _gridRefresh = true;
   bool get gridRefresh => _gridRefresh;
 
   List<String> _emailList = [];
   List<String> get emailList => _emailList;
+
+  ///PROVIDER FUNCTIONS
   void update(GoogleSignInAccount user) async {
     _user = user;
     notifyListeners();
@@ -37,18 +40,9 @@ class Sheets with ChangeNotifier {
     }
   }
 
-  Future<bool> checkNewUserInFirebase() async {
-    var response = await _users.doc(_user.id).get();
-    var userData = response.data();
-    if (userData == null) {
-      return false;
-    }
-    if (userData.containsKey('isInit')) {
-      return userData['isInit'] == true ? true : false;
-    }
-    return false;
-  }
+  //*********************************SHEET API CALLS**********************
 
+  ///CREATES A NEW SPREADSHEET(BULK MAILER)
   Future<void> createSpreadsheet([bool forceCreate = false]) async {
     const url = 'https://sheets.googleapis.com/v4/spreadsheets';
     var userExists = await checkNewUserInFirebase();
@@ -75,6 +69,7 @@ class Sheets with ChangeNotifier {
     notifyListeners();
   }
 
+  ///CREATES NEW SHEET WITH NAME ENTERED BY USER
   Future<bool> createSheet(String title) async {
     await getSpreadsheetId();
     String url =
@@ -106,6 +101,7 @@ class Sheets with ChangeNotifier {
     return true;
   }
 
+  ///OPENS SELECTED SHEET FOR EDITING
   Future<void> openSheet(int sheetId) async {
     var url =
         'https://docs.google.com/spreadsheets/d/$_spreadsheetId/edit#gid=$sheetId';
@@ -116,8 +112,8 @@ class Sheets with ChangeNotifier {
     }
   }
 
+  ///FOR EDITING INITIAL SHEET DATA(EG.HEADER)
   Future<void> addInitialData(UserSheet sheet) async {
-    await getSpreadsheetId();
     var url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/${sheet.sheetName}!A1:B1?valueInputOption=RAW';
 
@@ -166,6 +162,7 @@ class Sheets with ChangeNotifier {
         headers: await _user.authHeaders);
   }
 
+  ///TO FETCH EMAILS FROM SELECTED SHEET
   Future<bool> getSheetEmails(String sheetName) async {
     var url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/$sheetName!B2:B';
@@ -189,17 +186,7 @@ class Sheets with ChangeNotifier {
     return true;
   }
 
-  Future<void> sendEmail() async {
-    final Email email = Email(
-      body: '',
-      subject: 'Email subject',
-      recipients: _emailList,
-      isHTML: false,
-    );
-
-    await FlutterEmailSender.send(email);
-  }
-
+  ///GET ALL USER SHEETS FROM BULK MAILER
   Future<bool> getSheets() async {
     await getSpreadsheetId();
     String url =
@@ -223,22 +210,43 @@ class Sheets with ChangeNotifier {
     return true;
   }
 
+  ///MAILING
+  Future<void> sendEmail() async {
+    final Email email = Email(
+      body: '',
+      subject: 'Email subject',
+      recipients: _emailList,
+      isHTML: false,
+    );
+
+    await FlutterEmailSender.send(email);
+  }
+
+  //*******************************FIREBASE**************************
+
+  /// RETURNS TRUE IF USER ALREADY EXISTS IN FIREBASE DATABASE ON RE-SIGN-IN
+  Future<bool> checkNewUserInFirebase() async {
+    var response = await _users.doc(_user.id).get();
+    var userData = response.data();
+    if (userData == null) {
+      return false;
+    }
+    if (userData.containsKey('isInit')) {
+      return userData['isInit'] == true ? true : false;
+    }
+    return false;
+  }
+
+  ///FETCH SPREADSHEET-ID FROM FIREBASE
   Future<void> getSpreadsheetId() async {
     final userDataResponse = await _users.doc(_user.id).get();
     final userData = userDataResponse.data();
     _spreadsheetId = userData['spreadsheetId'];
   }
 
+  ///REFRESH SHEETS GRID AND RUNS getSheets FUNCTION.
   void forceRefresh() {
     _gridRefresh = true;
     notifyListeners();
   }
-
-//  //Drawer Functionality
-//  bool _showNavOptions = true;
-//  bool get showNavOptions => _showNavOptions;
-//  void setNavOptionsVisibility(bool value) {
-//    _showNavOptions = value;
-//    notifyListeners();
-//  }
 }
