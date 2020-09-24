@@ -24,9 +24,9 @@ class SheetItem extends StatelessWidget {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('No Email Addresses'),
+          title: Text('No Recipients found'),
           content: Text(
-              '${sheet.sheetName} contains no email addresses.\nAdd email addresses and try again.'),
+              '"${sheet.sheetName}" contains no recipients.\nAdd recipients and try again.'),
           actions: [
             FlatButton(
               child: Text('OK'),

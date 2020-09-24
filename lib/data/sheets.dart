@@ -45,10 +45,10 @@ class Sheets with ChangeNotifier {
     return false;
   }
 
-  Future<void> createSpreadsheet() async {
+  Future<void> createSpreadsheet([bool forceCreate = false]) async {
     const url = 'https://sheets.googleapis.com/v4/spreadsheets';
     var userExists = await checkNewUserInFirebase();
-    if (userExists) return;
+    if (userExists && !forceCreate) return;
     var response = await http.post(url,
         body: jsonEncode({
           "properties": {
@@ -63,9 +63,10 @@ class Sheets with ChangeNotifier {
         headers: await _user.authHeaders);
     var sheetResponse = jsonDecode(response.body);
     print('New Spreadsheet created with id: ${sheetResponse['spreadsheetId']}');
-    _users
+    await _users
         .doc(_user.id)
         .set({'isInit': true, 'spreadsheetId': sheetResponse['spreadsheetId']});
+    await addInitialData(UserSheet(0, 'Default'));
   }
 
   Future<bool> createSheet(String title) async {
@@ -191,12 +192,16 @@ class Sheets with ChangeNotifier {
     await FlutterEmailSender.send(email);
   }
 
-  Future<void> getSheets() async {
+  Future<bool> getSheets() async {
     await getSpreadsheetId();
     String url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId';
     var response = await http.get(url, headers: await _user.authHeaders);
-    var sheetsResponse = await jsonDecode(response.body)['sheets'] as List;
+    var responseData = await jsonDecode(response.body) as Map;
+    if (responseData.containsKey('error')) {
+      return false;
+    }
+    var sheetsResponse = await responseData['sheets'] as List;
     print(sheetsResponse);
     List<UserSheet> sheetList = [];
     sheetsResponse.forEach((sheet) {
@@ -205,6 +210,7 @@ class Sheets with ChangeNotifier {
     });
     _userSheets = sheetList;
     notifyListeners();
+    return true;
   }
 
   Future<void> getSpreadsheetId() async {
