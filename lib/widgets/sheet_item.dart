@@ -16,11 +16,29 @@ class SheetItem extends StatelessWidget {
         showDialog(
             barrierDismissible: false,
             context: context,
-            builder: (ctx) => LoadingDialog());
-        await Provider.of<Sheets>(context, listen: false)
+            builder: (ctx) => LoadingDialog('Getting Email addresses...'));
+        bool result = await Provider.of<Sheets>(context, listen: false)
             .getSheetEmails(sheet.sheetName);
         Navigator.of(context, rootNavigator: true).pop();
-        await Provider.of<Sheets>(context, listen: false).sendEmail();
+        if (result == true)
+          await Provider.of<Sheets>(context, listen: false).sendEmail();
+        else
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text('No Email Addresses'),
+              content: Text(
+                  '${sheet.sheetName} contains no email addresses.\nAdd email addresses and try again.'),
+              actions: [
+                FlatButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                )
+              ],
+            ),
+          );
       },
       leading: Icon(Icons.description),
       title: Text(sheet.sheetName),

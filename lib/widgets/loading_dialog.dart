@@ -2,6 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingDialog extends StatelessWidget {
+  final String loadingText;
+
+  LoadingDialog(this.loadingText);
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -12,7 +16,8 @@ class LoadingDialog extends StatelessWidget {
           children: [
             CircularProgressIndicator(),
             SizedBox(width: 10),
-            Text('Getting email addresses...'),
+            Text(loadingText),
+            SizedBox(width: 10),
           ],
         ),
       ),

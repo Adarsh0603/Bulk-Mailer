@@ -34,7 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.open_in_browser),
             onPressed: () {
-              showDialog(context: context, builder: (ctx) => LoadingDialog());
+              showDialog(
+                  context: context, builder: (ctx) => LoadingDialog('Example'));
             },
           )
         ],

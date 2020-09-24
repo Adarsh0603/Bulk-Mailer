@@ -19,7 +19,6 @@ class Sheets with ChangeNotifier {
   List<String> get emailList => _emailList;
   void update(GoogleSignInAccount user) async {
     _user = user;
-
     notifyListeners();
     await userUpdateOperations();
   }
@@ -28,7 +27,6 @@ class Sheets with ChangeNotifier {
     if (_user != null) {
       await createSpreadsheet();
     }
-
     if (_user == null) {
       _userSheets = [];
       notifyListeners();
@@ -70,7 +68,8 @@ class Sheets with ChangeNotifier {
         .set({'isInit': true, 'spreadsheetId': sheetResponse['spreadsheetId']});
   }
 
-  Future<void> createSheet(String title) async {
+  Future<bool> createSheet(String title) async {
+    await getSpreadsheetId();
     String url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId:batchUpdate';
     var response = await http.post(url,
@@ -80,21 +79,22 @@ class Sheets with ChangeNotifier {
               "addSheet": {
                 "properties": {
                   "title": title,
-                  "gridProperties": {
-                    "rowCount": 500
-//                    , "columnCount": 2
-                  },
+                  "gridProperties": {"rowCount": 500},
                 },
               }
             }
           ]
         }),
         headers: await _user.authHeaders);
-    var newSheetMetaData = jsonDecode(response.body);
+    var newSheetMetaData = await jsonDecode(response.body) as Map;
     print(newSheetMetaData);
+    if (newSheetMetaData.containsKey('error')) {
+      return false;
+    }
     var sheetId = await newSheetMetaData['replies'][0]['addSheet']['properties']
         ['sheetId'];
-    await openSheet(sheetId);
+    await addInitialData(UserSheet(sheetId, title));
+    return true;
   }
 
   Future<void> openSheet(int sheetId) async {
@@ -107,14 +107,14 @@ class Sheets with ChangeNotifier {
     }
   }
 
-  Future<void> addData() async {
+  Future<void> addInitialData(UserSheet sheet) async {
     await getSpreadsheetId();
     var url =
-        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/Default!A1:B1?valueInputOption=RAW';
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/${sheet.sheetName}!A1:B1?valueInputOption=RAW';
 
-    var response = await http.put(url,
+    await http.put(url,
         body: jsonEncode({
-          "range": "Default!A1:B1",
+          "range": "${sheet.sheetName}!A1:B1",
           "majorDimension": "ROWS",
           "values": [
             ["Name", "Email"],
@@ -122,16 +122,15 @@ class Sheets with ChangeNotifier {
         }),
         headers: await _user.authHeaders);
 
-    print(response.body);
     url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId:batchUpdate';
-    response = await http.post(url,
+    await http.post(url,
         body: jsonEncode({
           "requests": [
             {
               "updateSheetProperties": {
                 "properties": {
-                  "sheetId": 0,
+                  "sheetId": sheet.sheetId,
                   "gridProperties": {"frozenRowCount": 1}
                 },
                 "fields": "gridProperties.frozenRowCount"
@@ -141,7 +140,7 @@ class Sheets with ChangeNotifier {
               "addProtectedRange": {
                 "protectedRange": {
                   "range": {
-                    "sheetId": 0,
+                    "sheetId": sheet.sheetId,
                     "startRowIndex": 0,
                     "endRowIndex": 1,
                     "startColumnIndex": 1,
@@ -158,12 +157,16 @@ class Sheets with ChangeNotifier {
         headers: await _user.authHeaders);
   }
 
-  Future<void> getSheetEmails(String sheetName) async {
+  Future<bool> getSheetEmails(String sheetName) async {
     var url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/$sheetName!B2:B';
     var response = await http.get(url, headers: await _user.authHeaders);
     var responseData = jsonDecode(response.body)['values'] as List;
+    if (responseData == null) {
+      return false;
+    }
     List<String> fetchedEmailList = [];
+
     responseData.forEach((e) {
       if (e.length != 0) {
         if (e[0].toString().contains('@'))
@@ -173,6 +176,8 @@ class Sheets with ChangeNotifier {
     _emailList = fetchedEmailList;
     print(_emailList);
     notifyListeners();
+
+    return true;
   }
 
   Future<void> sendEmail() async {
