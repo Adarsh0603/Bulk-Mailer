@@ -1,7 +1,6 @@
 import 'package:bulk_mailer/constants.dart';
 import 'package:bulk_mailer/data/auth.dart';
-import 'package:bulk_mailer/data/sheets.dart';
-import 'package:bulk_mailer/screens/create_sheet.dart';
+import 'package:bulk_mailer/screens/help_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +55,15 @@ class NavDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: Icon(Icons.help),
+            title: Text('Help'),
+            onTap: () async {
+              Navigator.pop(context);
+              Navigator.of(context).pushNamed(HelpScreen.routeName);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
             title: Text('Sign Out'),
             onTap: () async {
               Navigator.pop(context);

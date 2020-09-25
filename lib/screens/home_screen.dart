@@ -1,8 +1,8 @@
+import 'package:bulk_mailer/constants.dart';
 import 'package:bulk_mailer/data/sheets.dart';
 import 'package:bulk_mailer/screens/create_sheet.dart';
 import 'package:bulk_mailer/widgets/force_spreadsheet.dart';
 import 'package:bulk_mailer/widgets/nav_drawer.dart';
-import 'package:bulk_mailer/widgets/sheet_item.dart';
 import 'package:bulk_mailer/widgets/sheets_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,26 +23,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sheets = Provider.of<Sheets>(context, listen: false);
     return Scaffold(
         drawer: NavDrawer(),
-        floatingActionButton: Builder(
-          builder: (context) => FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              if (Provider.of<Sheets>(context, listen: false)
-                      .userSheets
-                      .length !=
-                  0) {
-                Navigator.pushNamed(context, CreateSheet.routeName);
-              } else
-                Scaffold.of(context).showSnackBar(
-                    SnackBar(content: Text('No Spreadsheet Found')));
-            },
-          ),
-        ),
         appBar: AppBar(
           title: Text('Select Mail Sheet'),
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  if (Provider.of<Sheets>(context, listen: false)
+                          .userSheets
+                          .length !=
+                      0) {
+                    Navigator.pushNamed(context, CreateSheet.routeName);
+                  } else
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                        backgroundColor: kPrimaryColor,
+                        content: Text(
+                          'No Spreadsheet Found',
+                          style: kDrawerTextStyle1,
+                        )));
+                },
+              ),
+            ),
+          ],
         ),
         body: RefreshIndicator(
           onRefresh: refresh,

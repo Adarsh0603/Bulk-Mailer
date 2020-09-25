@@ -12,11 +12,19 @@ class CreateSheet extends StatefulWidget {
 }
 
 class _CreateSheetState extends State<CreateSheet> {
-  String sheetName = 'newSheet';
+  String sheetName = '';
 
   Future<void> createNewSheet(BuildContext ctx) async {
     final sheets = Provider.of<Sheets>(context, listen: false);
 
+    if (sheetName.trim().length == 0) {
+      Scaffold.of(ctx).hideCurrentSnackBar();
+      Scaffold.of(ctx).showSnackBar(SnackBar(
+        backgroundColor: kPrimaryColor,
+        content: Text('Please enter sheet name!', style: kSnackBarTextStyle),
+      ));
+      return;
+    }
     FocusScope.of(context).unfocus();
     showDialog(
         barrierDismissible: false,
@@ -30,6 +38,7 @@ class _CreateSheetState extends State<CreateSheet> {
       Navigator.of(context).pop();
     }
     Navigator.of(context, rootNavigator: true).pop();
+    Scaffold.of(ctx).hideCurrentSnackBar();
     Scaffold.of(ctx).showSnackBar(SnackBar(
       content: Text('Sheet with this name already exists',
           style: kSnackBarTextStyle),

@@ -54,14 +54,12 @@ class Sheets with ChangeNotifier {
           },
           "sheets": [
             {
-              "properties": {"sheetId": 0, "title": 'MailSheet'}
+              "properties": {"sheetId": 0, "title": 'Mail Sheet'}
             }
           ],
         }),
         headers: await _user.authHeaders);
     var sheetResponse = jsonDecode(response.body);
-    print(sheetResponse);
-    print('New Spreadsheet created with id: ${sheetResponse['spreadsheetId']}');
 
     await _users
         .doc(_user.id)
@@ -71,7 +69,7 @@ class Sheets with ChangeNotifier {
     _spreadsheetId = sheetResponse['spreadsheetId'];
     notifyListeners();
 
-    await addInitialData(UserSheet(0, 'MailSheet'));
+    await addInitialData(UserSheet(0, 'Mail Sheet'));
   }
 
   ///CREATES NEW SHEET WITH NAME ENTERED BY USER
@@ -94,7 +92,6 @@ class Sheets with ChangeNotifier {
         }),
         headers: await _user.authHeaders);
     var newSheetMetaData = await jsonDecode(response.body) as Map;
-    print(newSheetMetaData);
     if (newSheetMetaData.containsKey('error')) {
       return false;
     }
@@ -186,7 +183,6 @@ class Sheets with ChangeNotifier {
       }
     });
     _emailList = fetchedEmailList;
-    print(_emailList);
     notifyListeners();
 
     return true;
@@ -203,7 +199,6 @@ class Sheets with ChangeNotifier {
       return false;
     }
     var sheetsResponse = await responseData['sheets'] as List;
-    print(sheetsResponse);
     List<UserSheet> sheetList = [];
     sheetsResponse.forEach((sheet) {
       sheetList.add(UserSheet(

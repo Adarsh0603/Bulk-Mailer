@@ -24,9 +24,9 @@ class SheetItem extends StatelessWidget {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('No Recipients found'),
+          title: Text('No recipients found!'),
           content: Text(
-              '"${sheet.sheetName}" contains no recipients.\nAdd recipients and try again.'),
+              '\'${sheet.sheetName}\' contains no email addresses.\nAdd email addresses and try again.'),
           actions: [
             FlatButton(
               child: Text('OK'),
@@ -42,15 +42,20 @@ class SheetItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration:
+          BoxDecoration(border: Border.all(width: 2, color: Colors.grey[200])),
       child: Column(
         children: [
           Expanded(
               child: GestureDetector(
             onTap: () => onSelect(context),
-            child: Icon(
-              Icons.description,
-              color: kPrimaryColor,
-              size: 60,
+            child: Container(
+              width: double.infinity,
+              child: Icon(
+                Icons.description,
+                color: kPrimaryColor,
+                size: 60,
+              ),
             ),
           )),
           Container(
@@ -58,7 +63,11 @@ class SheetItem extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Row(
               children: [
-                Expanded(child: Text(sheet.sheetName)),
+                Expanded(
+                    child: Text(
+                  sheet.sheetName,
+                  style: kSheetTitleStyle,
+                )),
                 IconButton(
                   icon: Icon(
                     Icons.edit,

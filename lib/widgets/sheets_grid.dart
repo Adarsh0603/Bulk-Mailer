@@ -12,7 +12,10 @@ class SheetGrid extends StatelessWidget {
           margin: EdgeInsets.all(8),
           child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 1, crossAxisSpacing: 10, crossAxisCount: 2),
+                childAspectRatio: 1,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                crossAxisCount: 2),
             itemCount: sheets.userSheets.length,
             itemBuilder: (ctx, i) => SheetItem(sheets.userSheets[i]),
           ),
