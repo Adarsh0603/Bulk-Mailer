@@ -1,8 +1,9 @@
 import 'package:bulk_mailer/data/sheets.dart';
+import 'package:bulk_mailer/screens/create_sheet.dart';
 import 'package:bulk_mailer/widgets/force_spreadsheet.dart';
-import 'package:bulk_mailer/widgets/loading_dialog.dart';
 import 'package:bulk_mailer/widgets/nav_drawer.dart';
 import 'package:bulk_mailer/widgets/sheet_item.dart';
+import 'package:bulk_mailer/widgets/sheets_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,18 +26,23 @@ class _HomeScreenState extends State<HomeScreen> {
     final sheets = Provider.of<Sheets>(context, listen: false);
     return Scaffold(
         drawer: NavDrawer(),
+        floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              if (Provider.of<Sheets>(context, listen: false)
+                      .userSheets
+                      .length !=
+                  0) {
+                Navigator.pushNamed(context, CreateSheet.routeName);
+              } else
+                Scaffold.of(context).showSnackBar(
+                    SnackBar(content: Text('No Spreadsheet Found')));
+            },
+          ),
+        ),
         appBar: AppBar(
           title: Text('Select Mail Sheet'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.open_in_browser),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (ctx) => LoadingDialog('Example'));
-              },
-            )
-          ],
         ),
         body: RefreshIndicator(
           onRefresh: refresh,
@@ -47,10 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (BuildContext context,
                         AsyncSnapshot<dynamic> snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.data == true) {
-                          return SheetGrid();
-                        } else {
-                          return ForceSpreadsheet();
+                        if (snapshot.hasData) {
+                          if (snapshot.data == true) {
+                            return SheetGrid();
+                          } else {
+                            return ForceSpreadsheet();
+                          }
                         }
                       }
                       return Center(child: CircularProgressIndicator());
@@ -58,24 +66,5 @@ class _HomeScreenState extends State<HomeScreen> {
                 : SheetGrid(),
           ),
         ));
-  }
-}
-
-class SheetGrid extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<Sheets>(
-      builder: (BuildContext context, sheets, _) {
-        return Container(
-          margin: EdgeInsets.all(8),
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 1, crossAxisSpacing: 10, crossAxisCount: 2),
-            itemCount: sheets.userSheets.length,
-            itemBuilder: (ctx, i) => SheetItem(sheets.userSheets[i]),
-          ),
-        );
-      },
-    );
   }
 }

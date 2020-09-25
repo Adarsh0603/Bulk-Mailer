@@ -29,19 +29,21 @@ class NavDrawer extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          googleUser.displayName,
-                          style: kDrawerTextStyle1,
-                        ),
-                        Text(
-                          googleUser.email,
-                          style:
-                              kDrawerTextStyle1.copyWith(color: Colors.white70),
-                        ),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            googleUser.displayName,
+                            style: kDrawerTextStyle1,
+                          ),
+                          Text(
+                            googleUser.email,
+                            style: kDrawerTextStyle1.copyWith(
+                                color: Colors.white70),
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -52,20 +54,6 @@ class NavDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: kPrimaryColor,
             ),
-          ),
-          ListTile(
-            title: Text('Create Mail Sheet'),
-            onTap: () {
-              Navigator.pop(context);
-              if (Provider.of<Sheets>(context, listen: false)
-                      .userSheets
-                      .length !=
-                  0) {
-                Navigator.pushNamed(context, CreateSheet.routeName);
-              } else
-                Scaffold.of(context).showSnackBar(
-                    SnackBar(content: Text('No Spreadsheet Found')));
-            },
           ),
           ListTile(
             title: Text('Sign Out'),

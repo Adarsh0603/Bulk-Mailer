@@ -54,19 +54,24 @@ class Sheets with ChangeNotifier {
           },
           "sheets": [
             {
-              "properties": {"sheetId": 0, "title": 'Default'}
+              "properties": {"sheetId": 0, "title": 'MailSheet'}
             }
           ],
         }),
         headers: await _user.authHeaders);
     var sheetResponse = jsonDecode(response.body);
+    print(sheetResponse);
     print('New Spreadsheet created with id: ${sheetResponse['spreadsheetId']}');
+
     await _users
         .doc(_user.id)
         .set({'isInit': true, 'spreadsheetId': sheetResponse['spreadsheetId']});
-    await addInitialData(UserSheet(0, 'Default'));
+
     _gridRefresh = true;
+    _spreadsheetId = sheetResponse['spreadsheetId'];
     notifyListeners();
+
+    await addInitialData(UserSheet(0, 'MailSheet'));
   }
 
   ///CREATES NEW SHEET WITH NAME ENTERED BY USER
@@ -98,6 +103,7 @@ class Sheets with ChangeNotifier {
     await addInitialData(UserSheet(sheetId, title));
     _gridRefresh = true;
     notifyListeners();
+
     return true;
   }
 
@@ -193,7 +199,6 @@ class Sheets with ChangeNotifier {
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId';
     var response = await http.get(url, headers: await _user.authHeaders);
     var responseData = await jsonDecode(response.body) as Map;
-    print(responseData);
     if (responseData.containsKey('error')) {
       return false;
     }
