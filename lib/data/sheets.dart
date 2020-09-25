@@ -213,8 +213,6 @@ class Sheets with ChangeNotifier {
   ///MAILING
   Future<void> sendEmail() async {
     final Email email = Email(
-      body: '',
-      subject: 'Email subject',
       recipients: _emailList,
       isHTML: false,
     );

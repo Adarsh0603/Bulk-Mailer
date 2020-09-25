@@ -1,3 +1,4 @@
+import 'package:bulk_mailer/constants.dart';
 import 'package:bulk_mailer/data/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -14,6 +15,14 @@ class AuthScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+              'Bulk Mailer',
+              style: TextStyle(
+                  color: kPrimaryColor,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
             SignInButton(
               Buttons.Google,
               onPressed: () async {

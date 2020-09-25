@@ -1,6 +1,7 @@
 import 'package:bulk_mailer/constants.dart';
 import 'package:bulk_mailer/data/auth.dart';
 import 'package:bulk_mailer/data/sheets.dart';
+import 'package:bulk_mailer/screens/auth_screen.dart';
 import 'package:bulk_mailer/screens/create_sheet.dart';
 import 'package:bulk_mailer/screens/help_screen.dart';
 import 'package:bulk_mailer/screens/home_screen.dart';
