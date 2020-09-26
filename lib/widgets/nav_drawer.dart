@@ -19,6 +19,23 @@ class NavDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('Bulk Mailer', style: kAppTitleStyle),
+                    Text(
+                      'v1.0',
+                      style: kDrawerTextStyle1.copyWith(color: Colors.white54),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Text(
+                  'Google Account',
+                  style: kDrawerTextStyle1,
+                ),
+                Divider(color: Colors.white),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     ConstrainedBox(
@@ -34,28 +51,15 @@ class NavDrawer extends StatelessWidget {
                         children: [
                           Text(
                             googleUser.displayName,
-                            style: kDrawerTextStyle1,
+                            style: kDrawerTextStyleFaded,
                           ),
                           Text(
                             googleUser.email,
-                            style: kDrawerTextStyle1.copyWith(
-                                color: Colors.white70),
+                            style: kDrawerTextStyle1,
                           ),
                         ],
                       ),
                     )
-                  ],
-                ),
-                Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text('Bulk Mailer', style: kAppTitleStyle),
-                    Text(
-                      'v1.0',
-                      style: kDrawerTextStyle1.copyWith(color: Colors.white54),
-                    ),
                   ],
                 ),
               ],

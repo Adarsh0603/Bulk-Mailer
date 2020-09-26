@@ -10,9 +10,8 @@ class Auth with ChangeNotifier {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     _googleUser = await _googleSignIn.signIn();
-    notifyListeners();
     final GoogleSignInAuthentication googleAuth =
         await _googleUser.authentication;
 
@@ -21,7 +20,9 @@ class Auth with ChangeNotifier {
       idToken: googleAuth.idToken,
     );
 
-    return await _auth.signInWithCredential(credential);
+    await _auth.signInWithCredential(credential).then((_) {
+      notifyListeners();
+    });
   }
 
   Future<void> signOut() async {

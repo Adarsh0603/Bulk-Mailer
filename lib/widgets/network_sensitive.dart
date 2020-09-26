@@ -1,7 +1,5 @@
-import 'package:bulk_mailer/data/sheets.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class NetworkSensitive extends StatelessWidget {
   final Widget child;

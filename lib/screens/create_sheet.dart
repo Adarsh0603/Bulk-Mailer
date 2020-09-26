@@ -31,7 +31,7 @@ class _CreateSheetState extends State<CreateSheet> {
     showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (ctx) => LoadingDialog('Creating Sheet...'));
+        builder: (ctx) => LoadingDialog('Creating Mail Sheet...'));
 
     bool result = await sheets.createSheet(sheetName);
 

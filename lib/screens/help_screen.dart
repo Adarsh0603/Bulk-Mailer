@@ -21,6 +21,11 @@ class HelpScreen extends StatelessWidget {
               ),
               SizedBox(height: 5),
               Text(
+                '- Mail Sheets are stored in Bulk Mailer Spreadsheet in Google Drive of the signed in user.',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 5),
+              Text(
                 '- Newly created sheets can take some time to load in Google Sheets. Wait for few seconds before opening new sheets for editing.',
                 style: TextStyle(fontSize: 16),
               ),
