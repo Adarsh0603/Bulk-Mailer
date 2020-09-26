@@ -11,9 +11,9 @@ class HelpScreen extends StatelessWidget {
       ),
       body: Container(
         margin: EdgeInsets.all(16),
-        child: Center(
+        child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Bulk Mailer uses Google Sheets to get email addresses and send bulk mails.',
@@ -21,31 +21,66 @@ class HelpScreen extends StatelessWidget {
               ),
               SizedBox(height: 5),
               Text(
-                'NOTE:\nThe email addresses needs to be in \'B\' column of the sheet.\nDo not change the position of email column.',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                '- Newly created sheets can take some time to load in Google Sheets. Wait for few seconds before opening new sheets for editing.',
+                style: TextStyle(fontSize: 16),
               ),
-              Spacer(),
+              SizedBox(height: 5),
               Text(
-                'Install Google Sheets to \nedit the mail sheets in mobile',
-                style: TextStyle(color: Colors.grey),
-                textAlign: TextAlign.center,
+                '- You can also edit the mail sheets on PC.',
+                style: TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 10),
-              RaisedButton(
-                padding: EdgeInsets.all(0),
-                onPressed: () async {
+              SizedBox(height: 5),
+              Text(
+                '- The bulk mail limit depends on your mail service provider\'s limit.',
+                style: TextStyle(fontSize: 16),
+              ),
+              GestureDetector(
+                onTap: () async {
                   const url =
-                      'https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en_IN';
-
+                      'https://support.google.com/a/answer/166852?hl=en';
                   if (await canLaunch(url)) {
                     await launch(url);
                   } else {
                     throw 'Could not launch $url';
                   }
                 },
-                child: Image.asset(
-                  'images/sheets.png',
-                  scale: 5,
+                child: Text(
+                  'Gmail Limits',
+                  style: TextStyle(
+                      color: Colors.blue, decoration: TextDecoration.underline),
+                ),
+              ),
+              SizedBox(height: 5),
+              Text(
+                'NOTE:\nThe email addresses needs to be in \'B\' column of the sheet.\nDo not change the position of email column.',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+              ),
+              SizedBox(height: 100),
+              Center(
+                child: Text(
+                  'Install Google Sheets to \nedit the mail sheets in mobile',
+                  style: TextStyle(color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 10),
+              Center(
+                child: RaisedButton(
+                  padding: EdgeInsets.all(0),
+                  onPressed: () async {
+                    const url =
+                        'https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en_IN';
+
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                  child: Image.asset(
+                    'images/sheets.png',
+                    scale: 5,
+                  ),
                 ),
               ),
               SizedBox(height: 20),

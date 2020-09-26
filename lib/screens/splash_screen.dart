@@ -6,22 +6,10 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            'images/bmlogo.png',
-            scale: 4,
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Bulk Mailer',
-            style: TextStyle(
-                color: Colors.black12,
-                fontSize: 24,
-                fontWeight: FontWeight.bold),
-          )
-        ],
+      child: Text(
+        'Bulk Mailer',
+        style: TextStyle(
+            color: Colors.black12, fontSize: 24, fontWeight: FontWeight.bold),
       ),
     ));
   }

@@ -47,7 +47,17 @@ class NavDrawer extends StatelessWidget {
                   ],
                 ),
                 Spacer(),
-                Text('Bulk Mailer', style: kAppTitleStyle),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('Bulk Mailer', style: kAppTitleStyle),
+                    Text(
+                      'v1.0',
+                      style: kDrawerTextStyle1.copyWith(color: Colors.white54),
+                    ),
+                  ],
+                ),
               ],
             ),
             decoration: BoxDecoration(
@@ -55,7 +65,7 @@ class NavDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.help),
+            leading: Icon(Icons.help_outline),
             title: Text('Help'),
             onTap: () async {
               Navigator.pop(context);
@@ -63,7 +73,7 @@ class NavDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
+            leading: Icon(Icons.arrow_back),
             title: Text('Sign Out'),
             onTap: () async {
               Navigator.pop(context);

@@ -5,8 +5,10 @@ import 'package:bulk_mailer/screens/auth_screen.dart';
 import 'package:bulk_mailer/screens/create_sheet.dart';
 import 'package:bulk_mailer/screens/help_screen.dart';
 import 'package:bulk_mailer/screens/home_screen.dart';
+import 'package:bulk_mailer/screens/no_network_screen.dart';
 import 'package:bulk_mailer/screens/splash_screen.dart';
 import 'package:bulk_mailer/screens/wrapper.dart';
+import 'package:bulk_mailer/widgets/network_sensitive.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,12 +37,15 @@ class BulkMailer extends StatelessWidget {
         title: 'BulkMailer',
         theme:
             ThemeData(primaryColor: kPrimaryColor, accentColor: kPrimaryColor),
-        home: FutureBuilder(
-          future: _initialization,
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) =>
-              snapshot.connectionState == ConnectionState.waiting
-                  ? SplashScreen()
-                  : Wrapper(),
+        home: NetworkSensitive(
+          offlineChild: NoNetwork(),
+          child: FutureBuilder(
+            future: _initialization,
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) =>
+                snapshot.connectionState == ConnectionState.waiting
+                    ? SplashScreen()
+                    : Wrapper(),
+          ),
         ),
         routes: {
           HomeScreen.routeName: (ctx) => HomeScreen(),

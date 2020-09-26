@@ -18,9 +18,14 @@ class SheetItem extends StatelessWidget {
     bool result = await Provider.of<Sheets>(context, listen: false)
         .getSheetEmails(sheet.sheetName);
     Navigator.of(context, rootNavigator: true).pop();
-    if (result == true)
+    if (result == true) {
       await Provider.of<Sheets>(context, listen: false).sendEmail();
-    else
+      Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: kPrimaryColor,
+        content:
+            Text('Processing...\nCheck your mailing app for more details.'),
+      ));
+    } else
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(

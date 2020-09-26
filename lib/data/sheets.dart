@@ -25,6 +25,7 @@ class Sheets with ChangeNotifier {
   ///PROVIDER FUNCTIONS
   void update(GoogleSignInAccount user) async {
     _user = user;
+    _gridRefresh = true;
     notifyListeners();
     await userUpdateOperations();
   }
@@ -246,5 +247,9 @@ class Sheets with ChangeNotifier {
   void forceRefresh() {
     _gridRefresh = true;
     notifyListeners();
+  }
+
+  void refreshWithoutNotify() {
+    _gridRefresh = false;
   }
 }

@@ -1,6 +1,8 @@
 import 'package:bulk_mailer/constants.dart';
 import 'package:bulk_mailer/data/sheets.dart';
+import 'package:bulk_mailer/screens/no_network_screen.dart';
 import 'package:bulk_mailer/widgets/loading_dialog.dart';
+import 'package:bulk_mailer/widgets/network_sensitive.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -47,34 +49,37 @@ class _CreateSheetState extends State<CreateSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Create Mail Sheet'),
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: Icon(Icons.done),
-              onPressed: () async {
-                await createNewSheet(context);
-              },
-            ),
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              autofocus: true,
-              decoration: kSheetNameInputDecoration,
-              onChanged: (value) {
-                setState(() {
-                  sheetName = value;
-                });
-              },
-            ),
+    return NetworkSensitive(
+      offlineChild: NoNetwork(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Create Mail Sheet'),
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                icon: Icon(Icons.done),
+                onPressed: () async {
+                  await createNewSheet(context);
+                },
+              ),
+            )
           ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                autofocus: true,
+                decoration: kSheetNameInputDecoration,
+                onChanged: (value) {
+                  setState(() {
+                    sheetName = value;
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
