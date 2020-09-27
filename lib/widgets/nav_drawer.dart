@@ -76,6 +76,7 @@ class NavDrawer extends StatelessWidget {
               Navigator.of(context).pushNamed(HelpScreen.routeName);
             },
           ),
+          Divider(),
           ListTile(
             leading: Icon(Icons.arrow_back),
             title: Text('Sign Out'),
@@ -84,6 +85,7 @@ class NavDrawer extends StatelessWidget {
               await Provider.of<Auth>(context, listen: false).signOut();
             },
           ),
+          Divider(),
         ],
       ),
     );

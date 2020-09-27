@@ -55,7 +55,11 @@ class Sheets with ChangeNotifier {
           },
           "sheets": [
             {
-              "properties": {"sheetId": 0, "title": 'Mail Sheet'}
+              "properties": {
+                "sheetId": 0,
+                "title": 'Mail Sheet',
+                "gridProperties": {"rowCount": 500}
+              }
             }
           ],
         }),
@@ -247,9 +251,5 @@ class Sheets with ChangeNotifier {
   void forceRefresh() {
     _gridRefresh = true;
     notifyListeners();
-  }
-
-  void refreshWithoutNotify() {
-    _gridRefresh = false;
   }
 }

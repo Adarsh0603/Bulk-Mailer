@@ -21,22 +21,27 @@ class HelpScreen extends StatelessWidget {
               ),
               SizedBox(height: 5),
               Text(
-                '- Mail Sheets are stored in Bulk Mailer Spreadsheet in Google Drive of the signed in user.',
+                'Mail Sheets are stored in Bulk Mailer Spreadsheet in Google Drive of the signed in user.',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 5),
               Text(
-                '- Newly created sheets can take some time to load in Google Sheets. Wait for few seconds before opening new sheets for editing.',
+                'You can delete, edit or rename the sheets directly from Google Sheets.',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 5),
               Text(
-                '- You can also edit the mail sheets on PC.',
+                'Newly created sheets can take some time to load in Google Sheets. Wait for few seconds before opening new sheets for editing.',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 5),
               Text(
-                '- The bulk mail limit depends on your mail service provider\'s limit.',
+                'You can also edit the mail sheets on PC.',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 5),
+              Text(
+                'The bulk mail limit depends on your mail service provider\'s limit.',
                 style: TextStyle(fontSize: 16),
               ),
               GestureDetector(
@@ -60,10 +65,10 @@ class HelpScreen extends StatelessWidget {
                 'NOTE:\nThe email addresses needs to be in \'B\' column of the sheet.\nDo not change the position of email column.',
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
               ),
-              SizedBox(height: 100),
+              SizedBox(height: 50),
               Center(
                 child: Text(
-                  'Install Google Sheets to \nedit the mail sheets in mobile',
+                  'Use Desktop mode in browser \nor install Google Sheets to \nedit the mail sheets in mobile',
                   style: TextStyle(color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
