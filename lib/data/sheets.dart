@@ -12,7 +12,8 @@ class Sheets with ChangeNotifier {
   GoogleSignInAccount _user;
   CollectionReference _users = FirebaseFirestore.instance.collection('users');
   String _spreadsheetId = '';
-
+  String _subject = '';
+  String _msg = '';
   List<UserSheet> _userSheets = [];
   List<UserSheet> get userSheets => _userSheets;
 
@@ -123,14 +124,14 @@ class Sheets with ChangeNotifier {
   ///FOR EDITING INITIAL SHEET DATA(EG.HEADER)
   Future<void> addInitialData(UserSheet sheet) async {
     var url =
-        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/${sheet.sheetName}!A1:B1?valueInputOption=RAW';
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/${sheet.sheetName}!A1:D1?valueInputOption=RAW';
 
     await http.put(url,
         body: jsonEncode({
-          "range": "${sheet.sheetName}!A1:B1",
+          "range": "${sheet.sheetName}!A1:D1",
           "majorDimension": "ROWS",
           "values": [
-            ["Name", "Email"],
+            ["Name", "Email", "Subject", "Message"],
           ],
         }),
         headers: await _user.authHeaders);
@@ -175,7 +176,17 @@ class Sheets with ChangeNotifier {
     var url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/$sheetName!B2:B';
     var response = await http.get(url, headers: await _user.authHeaders);
+    var subjectUrl =
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/$sheetName!C2:C2';
+    var responseSubject =
+        await http.get(subjectUrl, headers: await _user.authHeaders);
+    var msgUrl =
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/$sheetName!D2:D2';
+    var responseMsg = await http.get(msgUrl, headers: await _user.authHeaders);
+
     var responseData = jsonDecode(response.body)['values'] as List;
+    var subjects = jsonDecode(responseSubject.body)['values'] as List;
+    var msgs = jsonDecode(responseMsg.body)['values'] as List;
     if (responseData == null) {
       return false;
     }
@@ -188,6 +199,9 @@ class Sheets with ChangeNotifier {
       }
     });
     _emailList = fetchedEmailList;
+    _subject = subjects != null ? subjects[0][0] : '';
+    _msg = msgs != null ? msgs[0][0] : '';
+
     notifyListeners();
 
     return true;
@@ -219,6 +233,8 @@ class Sheets with ChangeNotifier {
   Future<void> sendEmail() async {
     final Email email = Email(
       recipients: _emailList,
+      subject: _subject,
+      body: _msg,
       isHTML: false,
     );
 

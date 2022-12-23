@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "247289635259-vohsmqc6f991bl7r533fina8ik1hbhdc.apps.googleusercontent.com",
+          "client_id": "247289635259-ecb2ko8ofa54pr1tjsa6u7j7nu41k093.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.adarshverma.bulk_mailer",
-            "certificate_hash": "94e48095e70ef90da65498aaa61db9a2d0c06570"
+            "certificate_hash": "25bc105db20445c97cdedf3d6bb35d258f23c94e"
+          }
+        },
+        {
+          "client_id": "247289635259-ngakigiighrqjm0ttgd29e3r21stshta.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adarshverma.bulk_mailer",
+            "certificate_hash": "e8b3eba3bf927a881a1c001f97c3aae4cd08c5c0"
           }
         },
         {
